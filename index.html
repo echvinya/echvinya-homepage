@@ -1,6 +1,243 @@
-const apps = [
-  { name: "Sword Drills",     url: "https://sworddrill.echvinya.com",     desc: "" },
-  { name: "Grid Run",         url: "https://gridrun.echvinya.com",        desc: "" },
-  { name: "Barrage Ultimate", url: "https://barrageultimate.echvinya.com", desc: "" },
-  { name: "The Calcio Quiz",  url: "https://calcioquiz.echvinya.com",     desc: "" },
-];
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>echvinya</title>
+<meta name="description" content="Small games and learning apps.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23000'/><rect x='18' y='18' width='64' height='64' fill='%23C8102E'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,400..900&family=Public+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  /* ---------- Colors and type ---------- */
+  :root {
+    --grey:      #3A3B3F;  /* page background */
+    --grey-deep: #2A2B2E;  /* footer, subtle panels */
+    --black:     #000000;  /* app rows */
+    --red:       #C8102E;  /* accent */
+    --red-hot:   #E3263F;  /* accent on hover */
+    --text:      #EEEDEA;
+    --muted:     #A7A8AD;
+
+    --display: "Anybody", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+    --body: "Public Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+
+    color-scheme: dark;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  *, *::before, *::after { box-sizing: inherit; }
+
+  html, body { margin: 0; }
+  body {
+    background: var(--grey);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    width: min(100% - 2.5rem, 60rem);
+    margin-inline: auto;
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    padding-block: clamp(3rem, 10vw, 6.5rem) clamp(2rem, 6vw, 3.5rem);
+  }
+
+  .wordmark {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: 900;
+    font-stretch: 62%;
+    font-variation-settings: "wdth" 62;
+    font-size: clamp(4rem, 17vw, 10.5rem);
+    line-height: 0.82;
+    letter-spacing: -0.01em;
+    color: var(--black);
+  }
+  .wordmark .bar {
+    display: block;
+    width: 0.5em;
+    height: 0.09em;
+    margin-top: 0.14em;
+    background: var(--red);
+  }
+
+  .intro {
+    margin: 1.75rem 0 0;
+    max-width: 34ch;
+    font-size: 1.25rem;
+    color: var(--text);
+  }
+
+  /* ---------- App list ---------- */
+  .apps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .app a {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 0.35rem 2rem;
+    padding: 1.5rem 1.75rem 1.5rem 2.25rem;
+    background: var(--black);
+    color: inherit;
+    text-decoration: none;
+    overflow: hidden;
+  }
+
+  /* The red edge that grows when a row is pointed at or focused */
+  .app a::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 0.4rem;
+    background: var(--red);
+    transition: width 220ms ease;
+  }
+  .app a:hover::before,
+  .app a:focus-visible::before { width: 0.9rem; }
+
+  .app a:focus-visible {
+    outline: 3px solid var(--red-hot);
+    outline-offset: 3px;
+  }
+
+  .app-name {
+    grid-column: 1;
+    margin: 0;
+    font-family: var(--display);
+    font-weight: 800;
+    font-stretch: 80%;
+    font-variation-settings: "wdth" 80;
+    font-size: clamp(1.6rem, 4.5vw, 2.4rem);
+    line-height: 1.05;
+  }
+
+  .app-desc {
+    grid-column: 1;
+    margin: 0;
+    max-width: 60ch;
+    color: var(--muted);
+  }
+
+  .app-host {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--muted);
+    white-space: nowrap;
+    transition: color 220ms ease;
+  }
+  .app a:hover .app-host,
+  .app a:focus-visible .app-host { color: var(--red-hot); }
+
+  @media (max-width: 40rem) {
+    .app a {
+      grid-template-columns: 1fr;
+      padding: 1.25rem 1.25rem 1.25rem 1.75rem;
+    }
+    .app-host {
+      grid-column: 1;
+      grid-row: auto;
+      margin-top: 0.4rem;
+    }
+  }
+
+  /* ---------- Footer ---------- */
+  footer {
+    margin-top: clamp(3rem, 8vw, 5rem);
+    padding-block: 1.5rem;
+    background: var(--grey-deep);
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  footer p { margin: 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <h1 class="wordmark">echvinya<span class="bar" aria-hidden="true"></span></h1>
+  <p class="intro">Small games and learning apps, built for camp, class, and family game night.</p>
+</header>
+
+<main class="wrap">
+  <ul class="apps" id="app-list" aria-label="Apps">
+    <!-- Filled in from the list below. This fallback shows if JavaScript is off. -->
+    <noscript>
+      <li class="app"><a href="https://sworddrill.echvinya.com"><h2 class="app-name">Sword Drills</h2></a></li>
+      <li class="app"><a href="https://gridrun.echvinya.com"><h2 class="app-name">Grid Run</h2></a></li>
+      <li class="app"><a href="https://barrageultimate.echvinya.com"><h2 class="app-name">Barrage Ultimate</h2></a></li>
+      <li class="app"><a href="https://calcioquiz.echvinya.com"><h2 class="app-name">The Calcio Quiz</h2></a></li>
+    </noscript>
+  </ul>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>echvinya.com</p>
+  </div>
+</footer>
+
+<script>
+  /* =========================================================
+     YOUR APPS
+     To add an app, copy one line and change the three values.
+     The order here is the order on the page.
+     ========================================================= */
+  const apps = [
+    { name: "Sword Drills",     url: "https://sworddrill.echvinya.com",      desc: "Call out Bible verses for the classic Sword Drill game." },
+    { name: "Grid Run",         url: "https://gridrun.echvinya.com",         desc: "A Tech Camp game: cross an 8×8 grid full of invisible obstacles." },
+    { name: "Barrage Ultimate", url: "https://barrageultimate.echvinya.com", desc: "A card battle game played with a standard deck." },
+    { name: "The Calcio Quiz",  url: "https://calcioquiz.echvinya.com",      desc: "Learn Italian one quiz question at a time." },
+  ];
+
+  /* ---------- No need to edit below this line ---------- */
+  const list = document.getElementById("app-list");
+  list.innerHTML = "";
+
+  for (const app of apps) {
+    const li = document.createElement("li");
+    li.className = "app";
+
+    const a = document.createElement("a");
+    a.href = app.url;
+
+    const name = document.createElement("h2");
+    name.className = "app-name";
+    name.textContent = app.name;
+
+    const desc = document.createElement("p");
+    desc.className = "app-desc";
+    desc.textContent = app.desc;
+
+    const host = document.createElement("span");
+    host.className = "app-host";
+    host.textContent = new URL(app.url).hostname;
+
+    a.append(name, desc, host);
+    li.append(a);
+    list.append(li);
+  }
+</script>
+</body>
+</html>
